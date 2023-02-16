@@ -1,6 +1,7 @@
 #include <iostream>
 #include "cHotel.hpp"
 #include <string>
+#include "cRandom.hpp"
 using namespace std;
 
 cHotel::cHotel(string name, int star, int room, int floor){
@@ -40,9 +41,22 @@ void cHotel::setnFloor(int a){
     this->nFloor = a;
 }
 
-void cHotel::printRoom(){
-    cout << this->r->getNumber() << endl;
-    cout << this->r->getNPeople() << endl;
-    cout << this->r->getFridge() << endl;
+
+void cHotel::printHotel(){
+    cout << this->getName() << endl;
+    cout << this->getStars() << endl;
+    cout << this->getnRoom() << endl;
+    cout << this->getnFloor() << endl;
+
 }
+
+// void cHotel::generateRoom(){
+//     int x = (this->nRoom * this->nFloor);
+//     int roomCapacity = generateNumber(0, 5);
+//     for (int i =0;i<x;i++){
+//         array[i] = new cRoom(roomNumber, roomCapacity);
+//     }
+
+// }
+
 

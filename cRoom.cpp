@@ -1,13 +1,15 @@
 #include "cRoom.hpp"
 #include <iostream>
+#include "cRandom.hpp"
 
 using namespace std;
 
 
-cRoom::cRoom(int number, int nPeople, bool fridge){
+cRoom::cRoom(int number, int nPeople){
     this->number = number;
     this->nPeople = nPeople;
-    this->fridge = fridge;
+    this->occuped = false;
+    setFridge();
 }
 
 int cRoom::getNumber(){
@@ -35,16 +37,21 @@ void cRoom::setNPeople(int a){
     this->nPeople = a;
 }
 
-void cRoom::setFridge(bool a){
-    this->fridge = a;
+void cRoom::setFridge(){
+    int x = generateNumber(0, 2);
+    if (x == 0) this->fridge = false;
+    else if (x == 1) this->fridge = true;
+    
 }
 
 void cRoom::setOccuped(bool a){
     this->occuped = a;
+    
 }
 
 void cRoom::printAll(){
     cout << this->number << endl;
     cout << this->nPeople << endl;
     cout << this->fridge << endl;
+    cout << this->occuped << endl;
 }

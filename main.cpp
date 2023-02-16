@@ -1,13 +1,18 @@
 #include <iostream>
-#include "cHotel.hpp"
+#include <vector>
+#include "cRoom.hpp"
+
 
 using namespace std;
 
 int main(){
-    cHotel *h = new cHotel("california", 5, 40, 4);
 
-    h->printRoom();
-    
-    
-    
+
+    cRoom quarto(1, 5);
+    quarto.printAll();
+
+
+
+
+
 }

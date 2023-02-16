@@ -2,7 +2,7 @@
 class cRoom{
     
     public:
-        cRoom(int, int, bool);
+        cRoom(int, int);
         int getNumber();
         int getNPeople();
         bool getFridge();
@@ -10,7 +10,7 @@ class cRoom{
 
         void setNumber(int);
         void setNPeople(int);
-        void setFridge(bool);
+        void setFridge();
         void setOccuped(bool);
 
         void printAll();
