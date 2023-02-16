@@ -21,6 +21,11 @@ int cRoom::getNPeople(){
 bool cRoom::getFridge(){
     return this->fridge;
 }
+bool cRoom::getOccuped(){
+    return this->occuped;
+}
+
+
 
 void cRoom::setNumber(int a){
     this->number = a;
@@ -32,6 +37,10 @@ void cRoom::setNPeople(int a){
 
 void cRoom::setFridge(bool a){
     this->fridge = a;
+}
+
+void cRoom::setOccuped(bool a){
+    this->occuped = a;
 }
 
 void cRoom::printAll(){

@@ -1,14 +1,13 @@
 #include <iostream>
-#include "cRoom.hpp"
+#include "cHotel.hpp"
 
 using namespace std;
 
 int main(){
-    cRoom *r = new cRoom(10, 20, false);
+    cHotel *h = new cHotel("california", 5, 40, 4);
 
-    r->printAll();
-
-    r->setFridge(true);
+    h->printRoom();
+    
     
     
 }

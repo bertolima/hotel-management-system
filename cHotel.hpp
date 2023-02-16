@@ -1,4 +1,6 @@
 #include <string>
+#include <vector>
+#include "cRoom.hpp"
 
 class cHotel{
     private:
@@ -6,6 +8,8 @@ class cHotel{
         int stars;
         int nRoom;
         int nFloor;
+        cRoom *r = new cRoom(10, 20, false);
+        std::vector<cRoom> array;
         
     public:
         cHotel(std::string, int, int, int);
@@ -18,5 +22,6 @@ class cHotel{
         void setStars(int);
         void setnRoom(int);
         void setnFloor(int);
+        void printRoom();
         
 };
