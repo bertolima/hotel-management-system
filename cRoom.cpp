@@ -50,8 +50,10 @@ void cRoom::setOccuped(bool a){
 }
 
 void cRoom::printAll(){
+    cout << endl;
     cout << this->number << endl;
     cout << this->nPeople << endl;
     cout << this->fridge << endl;
     cout << this->occuped << endl;
+    cout << endl;
 }

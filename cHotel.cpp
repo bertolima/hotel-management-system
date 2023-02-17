@@ -50,13 +50,22 @@ void cHotel::printHotel(){
 
 }
 
-// void cHotel::generateRoom(){
-//     int x = (this->nRoom * this->nFloor);
-//     int roomCapacity = generateNumber(0, 5);
-//     for (int i =0;i<x;i++){
-//         array[i] = new cRoom(roomNumber, roomCapacity);
-//     }
+void cHotel::generateRoom(){
+    int x = (this->nRoom * this->nFloor);
+    
 
-// }
+    for (int i =0;i<x;i++){
+        int roomCapacity = generateNumber(0, 5);
+        this->array.push_back(cRoom(roomNumber, roomCapacity));
+        roomNumber++;
+    }
+}
+
+void cHotel::printAllRoom(){
+    for (int i=0;i<this->array.size();i++){
+        this->array[i].printAll();
+    }
+    
+}
 
 

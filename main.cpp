@@ -1,15 +1,18 @@
 #include <iostream>
 #include <vector>
-#include "cRoom.hpp"
+#include "cHotel.hpp"
 
 
 using namespace std;
 
 int main(){
 
+    cHotel hotel("california", 5, 10, 4);
 
-    cRoom quarto(1, 5);
-    quarto.printAll();
+    hotel.generateRoom();
+    hotel.printAllRoom();
+
+
 
 
 
