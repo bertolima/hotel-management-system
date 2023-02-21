@@ -49,6 +49,14 @@ void cRoom::setOccuped(bool a){
     
 }
 
+void cRoom::setGuest(cGuest x){
+    *guest = x;
+}
+
+cGuest cRoom::getGuest(){
+    return *guest;
+}
+
 void cRoom::printAll(){
     cout << endl;
     cout << this->number << endl;

@@ -10,7 +10,9 @@ class cHotel{
         int nRoom;
         int nFloor;
         int roomNumber = 0;
-        std::vector<cRoom> array;
+        std::vector<cRoom> rooms;
+        std::vector<cGuest> guests;
+        std::vector<cGuest> auxGuests;
         
         
     public:
@@ -27,6 +29,7 @@ class cHotel{
         void setnFloor(int);
         void printHotel();
 
+        void generateGuests(int);
         void generateRoom();
         void allocateRoom();
         void updateRoom();

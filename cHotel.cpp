@@ -50,20 +50,56 @@ void cHotel::printHotel(){
 
 }
 
+
+void cHotel::generateGuests(int quantity){
+    for (int i=0;i<quantity;i++){
+        int x = generateNumber(1, 5);
+        int y = generateNumber(0, 5);
+        int z = generateNumber(0, 2);
+        bool f;
+        if (z==0){
+            f = true;
+        }
+        else if(z==1) f = false;
+
+        this->guests.push_back(cGuest(x, y, f));
+
+    }
+
+}
+
 void cHotel::generateRoom(){
     int x = (this->nRoom * this->nFloor);
-    
-
     for (int i =0;i<x;i++){
         int roomCapacity = generateNumber(0, 5);
-        this->array.push_back(cRoom(roomNumber, roomCapacity));
+        this->rooms.push_back(cRoom(roomNumber, roomCapacity));
         roomNumber++;
     }
 }
 
+void cHotel::allocateRoom(){
+    for (int i=0;i<this->rooms.size();i++){
+        if (this->rooms[i].getOccuped() == false){
+            if (this->rooms[i].getFridge() == true){
+                for (int j=0;j<this->guests.size();j++){
+                    if (this->guests[j].getFridge() == this->rooms[i].getFridge() && this->guests[j].getQuant() == this->rooms[i].getNPeople() && this->guests[j].getStar() == this->getStars()){
+                        this->rooms[i].setOccuped(true);
+                        this->rooms[i].setGuest(this->guests[j]);
+                        break;
+
+                    }
+
+                }
+            }
+
+        }
+    }
+}
+
+
 void cHotel::printAllRoom(){
-    for (int i=0;i<this->array.size();i++){
-        this->array[i].printAll();
+    for (int i=0;i<this->rooms.size();i++){
+        this->rooms[i].printAll();
     }
     
 }
