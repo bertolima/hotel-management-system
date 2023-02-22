@@ -1,107 +1,47 @@
 #include <iostream>
+#include <cstdlib>
 #include "cHotel.hpp"
-#include <string>
-#include "cRandom.hpp"
-using namespace std;
 
-cHotel::cHotel(string name, int star, int room, int floor){
-    this->name = name;
-    this->stars = star;
-    this->nRoom = room;
-    this->nFloor = floor;
+
+
+int generateNumber(int a, int b){
+	srand((unsigned) time(NULL));
+	int random = a + (rand() % b);
+	return random;
 }
 
-string cHotel::getName(){
-    return this->name;
-}
-
-int cHotel::getStars(){
-    return this->stars;
-}
-int cHotel::getnRoom(){
-    return this->nRoom;
-}
-int cHotel::getnFloor(){
-    return this->nFloor;
-}
-
-void cHotel::setName(string a){
-    this->name = a;
-}
-
-void cHotel::setStars(int a){
-    this->stars = a;
-}
-
-void cHotel::setnRoom(int a){
-    this->nRoom = a;
-}
-
-void cHotel::setnFloor(int a){
-    this->nFloor = a;
+cRoom::cRoom(int n, int c, bool f){
+    this->number = n;
+    this->capacity = c;
+    this->hasFridge = f;
 }
 
 
-void cHotel::printHotel(){
-    cout << this->getName() << endl;
-    cout << this->getStars() << endl;
-    cout << this->getnRoom() << endl;
-    cout << this->getnFloor() << endl;
-
+cHotel::cHotel(std::string n, int s, int r, int f){
+    this->name = n;
+    this->stars = s;
+    this->qRooms = r;
+    this->qFloors = f;
 }
 
+void cHotel::roomGen(){
+    int qtd = this->qRooms*this->qFloors;
+    int number = 0;
+    bool f;
 
-void cHotel::generateGuests(int quantity){
-    for (int i=0;i<quantity;i++){
-        int x = generateNumber(1, 5);
-        int y = generateNumber(0, 5);
-        int z = generateNumber(0, 2);
-        bool f;
-        if (z==0){
-            f = true;
-        }
-        else if(z==1) f = false;
-
-        this->guests.push_back(cGuest(x, y, f));
-
-    }
-
-}
-
-void cHotel::generateRoom(){
-    int x = (this->nRoom * this->nFloor);
-    for (int i =0;i<x;i++){
-        int roomCapacity = generateNumber(0, 5);
-        this->rooms.push_back(cRoom(roomNumber, roomCapacity));
-        roomNumber++;
-    }
-}
-
-void cHotel::allocateRoom(){
-    for (int i=0;i<this->rooms.size();i++){
-        if (this->rooms[i].getOccuped() == false){
-            if (this->rooms[i].getFridge() == true){
-                for (int j=0;j<this->guests.size();j++){
-                    if (this->guests[j].getFridge() == this->rooms[i].getFridge() && this->guests[j].getQuant() == this->rooms[i].getNPeople() && this->guests[j].getStar() == this->getStars()){
-                        this->rooms[i].setOccuped(true);
-                        this->rooms[i].setGuest(this->guests[j]);
-                        break;
-
-                    }
-
-                }
-            }
-
-        }
+    for (int i=0;i<qtd;i++){
+        int c = generateNumber(0, 6);
+        int x = generateNumber(0, 2);
+        if (x == 0)  f = true;
+        else f = false;
+        this->rooms.push_back(cRoom(number, c, f));
+        number++;
     }
 }
 
 
-void cHotel::printAllRoom(){
-    for (int i=0;i<this->rooms.size();i++){
-        this->rooms[i].printAll();
-    }
-    
-}
+
+
+
 
 
