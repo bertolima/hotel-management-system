@@ -8,6 +8,7 @@ int main(){
 
     cHotel hotel("california", 5, 10, 4);
     hotel.roomGen();
+    hotel.print(1);
 
     
 }
