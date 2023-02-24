@@ -1,4 +1,3 @@
-#include "cHotel.hpp"
 #include <ctime>
 #include "Screen.hpp"
 
@@ -7,9 +6,8 @@ using namespace std;
 
 int main(){
     srand(time(0));
-    cHotel hotel("california", 5, 5, 2);
 
-    Screen screen;
+    Screen screen("california", 5, 5, 2);
 
 //gameloop
     while(screen.running()){
