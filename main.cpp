@@ -1,6 +1,6 @@
 #include "cHotel.hpp"
-#include <iostream>
 #include <ctime>
+#include "Screen.hpp"
 
 using namespace std;
 
@@ -8,10 +8,20 @@ using namespace std;
 int main(){
     srand(time(0));
     cHotel hotel("california", 5, 5, 2);
-    hotel.roomGen();
-    hotel.queueFill(10);
-    hotel.print();
-    hotel.allocate();
-    hotel.print();
+
+    Screen screen;
+
+//gameloop
+    while(screen.running()){
+        //update
+        screen.update();
+
+        //render
+        screen.render();
+        
+
+        }
+
+    return 0;
     
 }
