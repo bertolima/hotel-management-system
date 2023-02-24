@@ -12,20 +12,35 @@ class cGuest{
 
     public:
         cGuest(int, int, bool);
+        cGuest();
         void print();
+        int getQuant();
+        int getStar();
+        bool getFridge();
+        void setters(int, int, bool);
+        
 
 };
 
 class cRoom{
-    
-    int number;
-    int capacity;
-    bool hasFridge;
+    private:
+        int number;
+        int capacity;
+        bool hasFridge;
+        bool occuped;
+        cGuest guest;
 
     public:
         cRoom(int, int, bool);
+        cRoom();
         void print();
-        void setters(int, int, bool);
+        int getNumber();
+        int getCapacity();
+        bool getFridge();
+        bool getOccuped();
+        cGuest getGuest();
+        void setOccuped(bool);
+        void setGuest(cGuest);
 };
 
 class cHotel{
@@ -41,9 +56,11 @@ class cHotel{
         cHotel(std::string, int, int, int);
         std::vector <cRoom> rooms;
         std::vector <cGuest> guests;
+        std::vector <cGuest> guestsAux;
         void roomGen();
         void queueFill(int);
-        void print(int);
+        void allocate();
+        void print();
 };
 
 
