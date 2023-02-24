@@ -54,6 +54,15 @@ class cHotel{
 
     public:
         cHotel(std::string, int, int, int);
+        cHotel();
+        void setName(std::string);
+        void setStars(int);
+        void setRoooms(int);
+        void setFloors(int);
+
+        std::string getName();
+
+
         std::vector <cRoom> rooms;
         std::vector <cGuest> guests;
         std::vector <cGuest> guestsAux;

@@ -114,6 +114,27 @@ cHotel::cHotel(std::string n, int s, int r, int f){
     this->qRooms = r;
     this->qFloors = f;
 }
+cHotel::cHotel(){
+
+}
+
+void cHotel::setName(std::string name){
+    this->name = name;
+
+}
+void cHotel::setStars(int stars){
+    this->stars = stars;
+}
+void cHotel::setRoooms(int rooms){
+    this->qRooms = rooms;
+}
+void cHotel::setFloors(int floors){
+    this->qFloors = floors;
+}
+
+std::string cHotel::getName(){
+    return this->name;
+}
 
 void cHotel::roomGen(){
     int qtd = this->qRooms*this->qFloors;
