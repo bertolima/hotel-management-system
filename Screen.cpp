@@ -1,10 +1,12 @@
 #include "Screen.hpp"
 
 
+
 //init 
 void Screen::initVariables(){
     this->window = nullptr;
     this->spawnTextTime = 2.f;
+ 
 }
 
 void Screen::initWindow(){
@@ -16,10 +18,10 @@ void Screen::initWindow(){
 
 void Screen::initText(){
     this->font.loadFromFile("./Atmosphier Notes.otf");
-    this->start.setCharacterSize(40);
-    this->start.setFillColor(sf::Color::Red);
-    this->start.setFont(font);
-    this->start.setString(hotel.getName());
+    this->button1 = new Button(100, 100, 150, 50,
+    &this->font, "Start Game",
+     sf::Color(70, 70, 70, 200), sf::Color(150, 150, 150, 200), sf::Color(20, 20, 20, 200));
+    
 }
 //constructor and destructor
 Screen::Screen(std::string m, int s, int r, int f){
@@ -59,20 +61,18 @@ void Screen::pollEvent(){
 }
 
 void Screen::updateMousePos(){
-    this->mousePosWindow = sf::Mouse::getPosition(*this->window);
+    this->mousePosWindow = sf::Mouse::getPosition();
+    mousePositionFloat = this->window->mapPixelToCoords(sf::Mouse::getPosition(*this->window));
 }
-
 void Screen::updateText(){
 
 }
-
 void Screen::update(){
     this->pollEvent();
     this->updateMousePos();
     this->updateText();
-}
-
-
+    this->button1->update(this->mousePositionFloat);
+} 
 void Screen::renderText(){
 
 }
@@ -85,7 +85,8 @@ void Screen::render(){
     this->window->clear();
 
     //draw game objects
-    this->window->draw(this->start);
+    // this->window->draw(this->start);
+    this->button1->render(this->window);
 
 
     this->window->display();

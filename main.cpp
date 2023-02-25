@@ -5,7 +5,7 @@ using namespace std;
 
 
 int main(){
-    srand(time(0));
+    srand(static_cast<unsigned>(time(NULL)));
 
     Screen screen("california", 5, 5, 2);
 
@@ -16,8 +16,6 @@ int main(){
 
         //render
         screen.render();
-        
-
         }
 
     return 0;
