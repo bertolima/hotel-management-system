@@ -1,12 +1,12 @@
 #pragma once
 
-#include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
 #include <SFML/Window.hpp>
 #include <SFML/Audio.hpp>
 #include <SFML/Network.hpp>
 #include <vector>
 #include "cHotel.hpp"
+#include "Button.hpp"
 #include <string>
 
 
@@ -22,12 +22,13 @@ class Screen{
         cHotel hotel;
 
         //game objects
+        Button* button1;
         sf::Font font;
-        sf::Text start;
         std::vector<sf::Text> texts;
 
         //mouse positions
         sf::Vector2i mousePosWindow;
+        sf::Vector2f mousePositionFloat;
 
         //logic
         float spawnTextTime;
