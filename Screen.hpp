@@ -4,27 +4,30 @@
 #include <SFML/Window.hpp>
 #include <SFML/Audio.hpp>
 #include <SFML/Network.hpp>
-#include <vector>
 #include "cHotel.hpp"
 #include "Button.hpp"
 #include <string>
+#include <map>
 
 
 class Screen{
     private:
         //variables
         //window
+        bool quit;
+        bool start;
         sf::RenderWindow* window;
         sf::VideoMode videoMode;
         sf::Event ev;
+        std::map<std::string, Button*> buttons;
+        std::map<std::string, sf::Text*> texts;
 
         //hotel
-        cHotel hotel;
+        cHotel *hotel;
 
         //game objects
-        Button* button1;
+        
         sf::Font font;
-        std::vector<sf::Text> texts;
 
         //mouse positions
         sf::Vector2i mousePosWindow;
@@ -37,7 +40,9 @@ class Screen{
         //private functions
         void initVariables();
         void initWindow();
+        void initFont();
         void initText();
+        void initButtons();
     public:
         //constructor and destructor
         Screen(std::string, int, int, int);
@@ -52,8 +57,10 @@ class Screen{
         void updateMousePos();
 
         void updateText();
+        void updateButtons();
         void update();
 
+        void renderButtons();
         void renderText();
         void render();
 };

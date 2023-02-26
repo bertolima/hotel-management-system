@@ -3,7 +3,6 @@
 
 using namespace std;
 
-
 int main(){
     srand(static_cast<unsigned>(time(NULL)));
 
