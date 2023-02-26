@@ -13,6 +13,8 @@
 class Screen{
     private:
         //variables
+
+        std::string texto;
         //window
         bool quit;
         bool start;

@@ -21,7 +21,7 @@ void Screen::initFont(){
 }
 
 void Screen::initText(){
-    this->texts["HOTEL_NAME"] = new sf::Text("Hotel name: ", this->font, 15);
+    this->texts["HOTEL_NAME"] = new sf::Text(this->texto, this->font, 30);
     this->texts["HOTEL_NAME"]->setPosition(0,0);
     this->texts["HOTEL_NAME"]->setFillColor(sf::Color::Red);
 }
@@ -71,6 +71,11 @@ void Screen::pollEvent(){
                 if(this->ev.key.code == sf::Keyboard::Escape)
                     window->close();
                 break;
+        }
+
+        if (this->ev.type == sf::Event::TextEntered){
+            if ((this->ev.text.unicode > 64 && this->ev.text.unicode < 91) || (this->ev.text.unicode > 96 && this->ev.text.unicode < 123) || this->ev.text.unicode == 32 )
+                this->texto.push_back(static_cast<char>(this->ev.text.unicode));
         }
     }    
 }
