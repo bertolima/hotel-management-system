@@ -34,6 +34,8 @@ class Button{
         //functions
         void update(const sf::Vector2f mousePos);
         void render(sf::RenderTarget* target);
+        void setPosition(float x, float y);
+        float getLocalBounds();
 
 
 };
