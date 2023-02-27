@@ -6,6 +6,9 @@ void Screen::initVariables(){
     this->spawnTextTime = 2.f;
     this->quit = false;
     this->start = false;
+    this->menu = true;
+    this->att_hotel_infos = false;
+    this->cont = 0;
  
 }
 
@@ -21,9 +24,51 @@ void Screen::initFont(){
 }
 
 void Screen::initText(){
-    this->texts["HOTEL_NAME"] = new sf::Text(this->texto, this->font, 30);
-    this->texts["HOTEL_NAME"]->setPosition(0,0);
-    this->texts["HOTEL_NAME"]->setFillColor(sf::Color::Red);
+    if (this->start == true){
+    this->texts["WRITE_HOTEL_NAME"] = new sf::Text("Write Hotel Name: ", this->font, 25);
+    this->texts["WRITE_HOTEL_STAR"] = new sf::Text("How many stars have?: ", this->font, 25);
+    this->texts["WRITE_HOTEL_ROOMS"] = new sf::Text("How many rooms per floor? ", this->font, 25);
+    this->texts["WRITE_HOTEL_FLOORS"] = new sf::Text("How many floors? ", this->font, 25);
+
+    this->texts["WRITE_HOTEL_NAME"]->setPosition(100, 100);
+    this->texts["WRITE_HOTEL_NAME"]->setFillColor(sf::Color::Green);
+    this->texts["WRITE_HOTEL_STAR"]->setPosition(100, 200);
+    this->texts["WRITE_HOTEL_STAR"]->setFillColor(sf::Color::Green);
+    this->texts["WRITE_HOTEL_ROOMS"]->setPosition(100, 300);
+    this->texts["WRITE_HOTEL_ROOMS"]->setFillColor(sf::Color::Green);
+    this->texts["WRITE_HOTEL_FLOORS"]->setPosition(100, 400);
+    this->texts["WRITE_HOTEL_FLOORS"]->setFillColor(sf::Color::Green);
+
+    this->boxTexts["HOTEL_NAME"] = new sf::Text(this->hotel_name, this->font, 25);
+    this->boxTexts["HOTEL_NAME"]->setPosition(texts["WRITE_HOTEL_NAME"]->getPosition().x + texts["WRITE_HOTEL_NAME"]->getGlobalBounds().width,texts["WRITE_HOTEL_NAME"]->getPosition().y);
+    this->boxTexts["HOTEL_NAME"]->setFillColor(sf::Color::Red);
+
+    this->boxTexts["HOTEL_STAR"] = new sf::Text(this->hotel_star, this->font, 25);
+    this->boxTexts["HOTEL_STAR"]->setPosition(texts["WRITE_HOTEL_STAR"]->getPosition().x + texts["WRITE_HOTEL_STAR"]->getGlobalBounds().width,texts["WRITE_HOTEL_STAR"]->getPosition().y);
+    this->boxTexts["HOTEL_STAR"]->setFillColor(sf::Color::Red);
+
+    this->boxTexts["HOTEL_ROOM"] = new sf::Text(this->hotel_room, this->font, 25);
+    this->boxTexts["HOTEL_ROOM"]->setPosition(texts["WRITE_HOTEL_ROOMS"]->getPosition().x + texts["WRITE_HOTEL_ROOMS"]->getGlobalBounds().width,texts["WRITE_HOTEL_ROOMS"]->getPosition().y);
+    this->boxTexts["HOTEL_ROOM"]->setFillColor(sf::Color::Red);
+
+    this->boxTexts["HOTEL_FLOOR"] = new sf::Text(this->hotel_floor, this->font, 25);
+    this->boxTexts["HOTEL_FLOOR"]->setPosition(texts["WRITE_HOTEL_FLOORS"]->getPosition().x + texts["WRITE_HOTEL_FLOORS"]->getGlobalBounds().width,texts["WRITE_HOTEL_FLOORS"]->getPosition().y);
+    this->boxTexts["HOTEL_FLOOR"]->setFillColor(sf::Color::Red);
+
+    this->posMenuTexts["HOTEL"] = new sf::Text("Hotel: ", this->font, 25);
+    this->posMenuTexts["STARS"] = new sf::Text("Stars: ", this->font, 25);
+    this->posMenuTexts["ROOMS"] = new sf::Text("Rooms: ", this->font, 25);
+    this->posMenuTexts["FLOORS"] = new sf::Text("Flooors: ", this->font, 25);
+
+    this->posMenuTexts["HOTEL"]->setPosition(10, 15);
+    this->posMenuTexts["HOTEL"]->setFillColor(sf::Color::Green);
+    this->posMenuTexts["STARS"]->setPosition(220, 15);
+    this->posMenuTexts["STARS"]->setFillColor(sf::Color::Green);
+    this->posMenuTexts["ROOMS"]->setPosition(340, 15);
+    this->posMenuTexts["ROOMS"]->setFillColor(sf::Color::Green);
+    this->posMenuTexts["FLOORS"]->setPosition(460, 15);
+    this->posMenuTexts["FLOORS"]->setFillColor(sf::Color::Green);
+    }
 }
 
 void Screen::initButtons(){
@@ -36,14 +81,19 @@ void Screen::initButtons(){
      sf::Color(70, 70, 70, 200), sf::Color(150, 150, 150, 200), sf::Color(20, 20, 20, 200));
 }
 
+void Screen::initHotel(){
+    if (this->menu == false){
+        int star = std::stoi(this->hotel_star);
+        int room = std::stoi(this->hotel_room);
+        int floor = std::stoi(this->hotel_floor);
+        this->hotel = new cHotel(hotel_name, star, room, floor);
+    }
+
+
+}
 
 //constructor and destructor
-Screen::Screen(std::string m, int s, int r, int f){
-    // this->hotel->setName(m);
-    // this->hotel->setStars(s);
-    // this->hotel->setRoooms(r);
-    // this->hotel->setFloors(f);
-
+Screen::Screen(){
 
     this->initVariables();
     this->initWindow();
@@ -73,10 +123,8 @@ void Screen::pollEvent(){
                 break;
         }
 
-        if (this->ev.type == sf::Event::TextEntered){
-            if ((this->ev.text.unicode > 64 && this->ev.text.unicode < 91) || (this->ev.text.unicode > 96 && this->ev.text.unicode < 123) || this->ev.text.unicode == 32 )
-                this->texto.push_back(static_cast<char>(this->ev.text.unicode));
-        }
+        this->updateTextPollEvent();
+        
     }    
 }
 
@@ -90,14 +138,14 @@ void Screen::updateMousePos(){
 void Screen::update(){
     this->pollEvent();
     this->updateMousePos();
-    this->updateText();
     this->updateButtons();
+    this->initText();
+    this->updateText();
+    this->initHotel();
 
     if (quit == true) this->window->close();
-    if (start == true) this->initText();
+    
 }
-
-
 
 void Screen::updateButtons(){
 
@@ -113,23 +161,98 @@ void Screen::updateButtons(){
         this->start = true;
     }
 
+    if (this->menu == false){
+        this->buttons["EXIT_STATE"]->setPosition(this->window->getSize().x - 10 -this->buttons["EXIT_STATE"]->getLocalBounds(), 10);
+    }
+
+}
+
+void Screen::updateTextPollEvent(){
+    if (start == true){
+            if (this->ev.type == sf::Event::TextEntered){
+                if (this->ev.text.unicode == 13){
+                    this->cont++;
+                    if (this->cont == 4) this->menu = false;
+                    
+                } 
+
+                if (((this->ev.text.unicode > 64 && this->ev.text.unicode < 91) || (this->ev.text.unicode > 96 && this->ev.text.unicode < 123) || this->ev.text.unicode == 32) && this->cont == 0 && hotel_name.size() < 10)
+                    {this->hotel_name.push_back(static_cast<char>(this->ev.text.unicode));
+                    }
+                else if ((!(this->hotel_name.empty())) && this->ev.text.unicode == 8 && this->cont == 0){
+                    this->hotel_name.pop_back();
+                    std::cout << this->hotel_name;
+                }
+        
+
+
+                if((this->ev.text.unicode > 47 && this->ev.text.unicode < 54) && this->cont == 1 && hotel_star.size() < 1)
+                    this->hotel_star.push_back(static_cast<char>(this->ev.text.unicode));
+                else if (!(this->hotel_star.empty()) && this->ev.text.unicode == 8 && this->cont == 1)
+                    this->hotel_star.pop_back();
+
+
+                if ((this->ev.text.unicode > 47 && this->ev.text.unicode < 58) && this->cont == 2 && hotel_room.size() < 2)
+                    this->hotel_room.push_back(static_cast<char>(this->ev.text.unicode));
+                else if (!(this->hotel_room.empty()) && this->ev.text.unicode == 8 && this->cont == 2)
+                    this->hotel_room.pop_back();
+
+                        
+                if ((this->ev.text.unicode > 47 && this->ev.text.unicode < 58) && this->cont == 3)
+                    this->hotel_floor.push_back(static_cast<char>(this->ev.text.unicode));
+                else if (!(this->hotel_floor.empty()) && this->ev.text.unicode == 8 && this->cont == 3 && hotel_floor.size() < 2)
+                    this->hotel_floor.pop_back();
+            }       
+
+        }
+
 }
 
 void Screen::updateText(){
-    
+
+        if (menu == false){
+            this->boxTexts["HOTEL_NAME"]->setPosition(this->posMenuTexts["HOTEL"]->getPosition().x + this->posMenuTexts["HOTEL"]->getGlobalBounds().width,this->posMenuTexts["HOTEL"]->getPosition().y);
+            this->boxTexts["HOTEL_STAR"]->setPosition(this->posMenuTexts["STARS"]->getPosition().x + this->posMenuTexts["STARS"]->getGlobalBounds().width,this->posMenuTexts["STARS"]->getPosition().y);
+            this->boxTexts["HOTEL_ROOM"]->setPosition(this->posMenuTexts["ROOMS"]->getPosition().x + this->posMenuTexts["ROOMS"]->getGlobalBounds().width,this->posMenuTexts["ROOMS"]->getPosition().y);
+            this->boxTexts["HOTEL_FLOOR"]->setPosition(this->posMenuTexts["FLOORS"]->getPosition().x + this->posMenuTexts["FLOORS"]->getGlobalBounds().width,this->posMenuTexts["FLOORS"]->getPosition().y);
+        }
+
+
 
 }
 
 void Screen::renderButtons(){
-
-    for (auto &it : this->buttons){
-        it.second->render(this->window);
+    if (start == false){
+        for (auto &it : this->buttons){
+            it.second->render(this->window);
+        }
+    }
+    else if(menu == false){
+        this->buttons["EXIT_STATE"]->render(this->window);
+        
     }
 }
 void Screen::renderText(){
-    for (auto &it : this->texts){
-        this->window->draw(*it.second);
-    }
+        if(menu == true){
+            for (auto &it : this->texts){
+                this->window->draw(*it.second);
+            }
+
+            for (auto &it : this->boxTexts){
+                this->window->draw(*it.second);
+            }
+        }
+
+        if(menu == false){
+            for (auto &it : this->posMenuTexts){
+                this->window->draw(*it.second);
+            }
+            for (auto &it : this->boxTexts){
+                this->window->draw(*it.second);
+            }
+
+        }
+    
 
 }
 void Screen::render(){

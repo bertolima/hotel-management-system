@@ -10,24 +10,28 @@
 #include <map>
 
 
+
 class Screen{
     private:
         //variables
-
-        std::string texto;
-        //window
+        std::map<std::string, Button*> buttons;
+        std::map<std::string, sf::Text*> texts;
+        std::map<std::string, sf::Text*> boxTexts;
+        std::map<std::string, sf::Text*> posMenuTexts;
+        std::string hotel_name, hotel_star, hotel_room, hotel_floor;
+        int cont;
         bool quit;
         bool start;
+        bool menu;
+        bool att_hotel_infos;
+
+        //window
         sf::RenderWindow* window;
         sf::VideoMode videoMode;
         sf::Event ev;
-        std::map<std::string, Button*> buttons;
-        std::map<std::string, sf::Text*> texts;
-
+        
         //hotel
         cHotel *hotel;
-
-        //game objects
         
         sf::Font font;
 
@@ -45,9 +49,10 @@ class Screen{
         void initFont();
         void initText();
         void initButtons();
+        void initHotel();
     public:
         //constructor and destructor
-        Screen(std::string, int, int, int);
+        Screen();
         virtual ~Screen();
 
         //acess
@@ -58,6 +63,7 @@ class Screen{
         void pollEvent();
         void updateMousePos();
 
+        void updateTextPollEvent();
         void updateText();
         void updateButtons();
         void update();
