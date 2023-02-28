@@ -7,16 +7,19 @@ void Screen::initVariables(){
     this->quit = false;
     this->start = false;
     this->menu = true;
-    this->att_hotel_infos = false;
+    this->quadColor = false;
+    this->write_state = WRITE_ZERO;
     this->cont = 0;
  
 }
+
 
 void Screen::initWindow(){
     this->videoMode.height = 600;
     this->videoMode.width = 800;
     this->window = new sf::RenderWindow(this->videoMode, "Beauty Screen", sf::Style::Titlebar | sf::Style::Close);
     this->window->setFramerateLimit(60);
+    this->clock = new sf::Clock;
 }
 
 void Screen::initFont(){
@@ -81,6 +84,15 @@ void Screen::initButtons(){
      sf::Color(70, 70, 70, 200), sf::Color(150, 150, 150, 200), sf::Color(20, 20, 20, 200));
 }
 
+
+void Screen::initQuad(){
+    if (start==true){
+
+        this->quad.setSize({20.f, 20.f});
+        this->quad.setPosition(texts["WRITE_HOTEL_NAME"]->getGlobalBounds().left - this->quad.getSize().x - 5, texts["WRITE_HOTEL_NAME"]->getPosition().y + 10);
+
+    }
+}
 void Screen::initHotel(){
     if (this->menu == false){
         int star = std::stoi(this->hotel_star);
@@ -125,6 +137,7 @@ void Screen::pollEvent(){
 
         this->updateTextPollEvent();
         
+        
     }    
 }
 
@@ -140,7 +153,9 @@ void Screen::update(){
     this->updateMousePos();
     this->updateButtons();
     this->initText();
+    this->initQuad();
     this->updateText();
+    this->updateQuad();
     this->initHotel();
 
     if (quit == true) this->window->close();
@@ -171,37 +186,48 @@ void Screen::updateTextPollEvent(){
     if (start == true){
             if (this->ev.type == sf::Event::TextEntered){
                 if (this->ev.text.unicode == 13){
-                    this->cont++;
-                    if (this->cont == 4) this->menu = false;
-                    
-                } 
-
-                if (((this->ev.text.unicode > 64 && this->ev.text.unicode < 91) || (this->ev.text.unicode > 96 && this->ev.text.unicode < 123) || this->ev.text.unicode == 32) && this->cont == 0 && hotel_name.size() < 10)
-                    {this->hotel_name.push_back(static_cast<char>(this->ev.text.unicode));
+                    switch(write_state){
+                        case WRITE_ZERO:
+                            write_state = WRITE_FIRST;
+                            break;
+                        case WRITE_FIRST:
+                            write_state = WRITE_SECOND;
+                            break;
+                        case WRITE_SECOND:
+                            write_state = WRITE_THIRD;
+                            break;
+                        case WRITE_THIRD:
+                            this->menu = false;
+                            break;   
                     }
-                else if ((!(this->hotel_name.empty())) && this->ev.text.unicode == 8 && this->cont == 0){
-                    this->hotel_name.pop_back();
-                    std::cout << this->hotel_name;
                 }
-        
-
-
-                if((this->ev.text.unicode > 47 && this->ev.text.unicode < 54) && this->cont == 1 && hotel_star.size() < 1)
-                    this->hotel_star.push_back(static_cast<char>(this->ev.text.unicode));
-                else if (!(this->hotel_star.empty()) && this->ev.text.unicode == 8 && this->cont == 1)
-                    this->hotel_star.pop_back();
-
-
-                if ((this->ev.text.unicode > 47 && this->ev.text.unicode < 58) && this->cont == 2 && hotel_room.size() < 2)
-                    this->hotel_room.push_back(static_cast<char>(this->ev.text.unicode));
-                else if (!(this->hotel_room.empty()) && this->ev.text.unicode == 8 && this->cont == 2)
-                    this->hotel_room.pop_back();
-
-                        
-                if ((this->ev.text.unicode > 47 && this->ev.text.unicode < 58) && this->cont == 3)
-                    this->hotel_floor.push_back(static_cast<char>(this->ev.text.unicode));
-                else if (!(this->hotel_floor.empty()) && this->ev.text.unicode == 8 && this->cont == 3 && hotel_floor.size() < 2)
-                    this->hotel_floor.pop_back();
+                switch(write_state){
+                    case WRITE_ZERO:
+                        if (((this->ev.text.unicode > 64 && this->ev.text.unicode < 91) || (this->ev.text.unicode > 96 && this->ev.text.unicode < 123) || this->ev.text.unicode == 32) && hotel_name.size() < 10)
+                            this->hotel_name.push_back(static_cast<char>(this->ev.text.unicode));
+                        else if ((!(this->hotel_name.empty())) && this->ev.text.unicode == 8)
+                            this->hotel_name.pop_back();
+                        break;
+                    case WRITE_FIRST:
+                        if((this->ev.text.unicode > 47 && this->ev.text.unicode < 54) && hotel_star.size() < 1)
+                            this->hotel_star.push_back(static_cast<char>(this->ev.text.unicode));
+                        else if (!(this->hotel_star.empty()) && this->ev.text.unicode == 8)
+                            this->hotel_star.pop_back();
+                        break;
+                    case WRITE_SECOND:
+                        if ((this->ev.text.unicode > 47 && this->ev.text.unicode < 58) && hotel_room.size() < 2)
+                            this->hotel_room.push_back(static_cast<char>(this->ev.text.unicode));
+                        else if (!(this->hotel_room.empty()) && this->ev.text.unicode == 8)
+                            this->hotel_room.pop_back();
+                        break;
+                    case WRITE_THIRD:
+                        if ((this->ev.text.unicode > 47 && this->ev.text.unicode < 58) && hotel_floor.size() < 2) 
+                            this->hotel_floor.push_back(static_cast<char>(this->ev.text.unicode));
+                        else if (!(this->hotel_floor.empty()) && this->ev.text.unicode == 8)
+                            this->hotel_floor.pop_back();
+                        break;
+                }         
+                
             }       
 
         }
@@ -221,6 +247,39 @@ void Screen::updateText(){
 
 }
 
+void Screen::updateQuad(){
+    switch(write_state){
+        case WRITE_ZERO:
+            break;
+        case WRITE_FIRST:
+            this->quad.setPosition(texts["WRITE_HOTEL_STAR"]->getGlobalBounds().left - this->quad.getSize().x - 5, texts["WRITE_HOTEL_STAR"]->getPosition().y + 10);
+            break;
+        case WRITE_SECOND:
+            this->quad.setPosition(texts["WRITE_HOTEL_ROOMS"]->getGlobalBounds().left - this->quad.getSize().x - 5, texts["WRITE_HOTEL_ROOMS"]->getPosition().y + 10);
+            break; 
+        case WRITE_THIRD:
+            this->quad.setPosition(texts["WRITE_HOTEL_FLOORS"]->getGlobalBounds().left - this->quad.getSize().x - 5, texts["WRITE_HOTEL_FLOORS"]->getPosition().y + 10);
+            break;
+        default:
+            this->quad.setPosition(texts["WRITE_HOTEL_NAME"]->getGlobalBounds().left - this->quad.getSize().x - 5, texts["WRITE_HOTEL_NAME"]->getPosition().y + 10);
+            break;
+
+
+    }
+
+    if(this->clock->getElapsedTime().asSeconds() >= 1.f){
+            if (this->quadColor == false){
+                this->quad.setFillColor(sf::Color::Black);
+                this->quadColor = true;
+            }
+            else{
+                this->quad.setFillColor(sf::Color::White);
+                this->quadColor = !this->quadColor;
+                
+            }
+            this->clock->restart();
+    }
+}
 void Screen::renderButtons(){
     if (start == false){
         for (auto &it : this->buttons){
@@ -255,6 +314,11 @@ void Screen::renderText(){
     
 
 }
+void Screen::renderQuad(){
+    if (menu == true) this->window->draw(this->quad);
+        
+}
+
 void Screen::render(){
     //clear old frames
     //render objects
@@ -267,6 +331,8 @@ void Screen::render(){
     // this->window->draw(this->start);
     this->renderButtons();
     this->renderText();
+    this->renderQuad();
+
     
     this->window->display();
 }

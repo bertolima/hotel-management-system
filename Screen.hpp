@@ -9,6 +9,8 @@
 #include <string>
 #include <map>
 
+enum write_states{WRITE_ZERO = 0, WRITE_FIRST,  WRITE_SECOND, WRITE_THIRD};
+
 
 
 class Screen{
@@ -19,16 +21,19 @@ class Screen{
         std::map<std::string, sf::Text*> boxTexts;
         std::map<std::string, sf::Text*> posMenuTexts;
         std::string hotel_name, hotel_star, hotel_room, hotel_floor;
+        sf::RectangleShape quad;
+        bool quadColor;
         int cont;
         bool quit;
         bool start;
         bool menu;
-        bool att_hotel_infos;
+        short unsigned write_state;
 
         //window
         sf::RenderWindow* window;
         sf::VideoMode videoMode;
         sf::Event ev;
+        sf::Clock* clock;
         
         //hotel
         cHotel *hotel;
@@ -50,6 +55,7 @@ class Screen{
         void initText();
         void initButtons();
         void initHotel();
+        void initQuad();
     public:
         //constructor and destructor
         Screen();
@@ -65,10 +71,12 @@ class Screen{
 
         void updateTextPollEvent();
         void updateText();
+        void updateQuad();
         void updateButtons();
         void update();
 
         void renderButtons();
         void renderText();
+        void renderQuad();
         void render();
 };
