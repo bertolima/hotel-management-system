@@ -8,9 +8,8 @@ int main(){
 
     Screen screen;
 
-//gameloop
-    while(screen.running())
-    {
+    //gameloop
+    while(screen.running()){
         //update
         screen.update();
         //render

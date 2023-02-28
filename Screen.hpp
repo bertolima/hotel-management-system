@@ -15,15 +15,18 @@ enum write_states{WRITE_ZERO = 0, WRITE_FIRST,  WRITE_SECOND, WRITE_THIRD};
 
 class Screen{
     private:
-        //variables
+        //on screen variables
         std::map<std::string, Button*> buttons;
         std::map<std::string, sf::Text*> texts;
         std::map<std::string, sf::Text*> boxTexts;
         std::map<std::string, sf::Text*> posMenuTexts;
         std::string hotel_name, hotel_star, hotel_room, hotel_floor;
         sf::RectangleShape quad;
+        std::string dayCount;
+        int count;
+
+        //control variables
         bool quadColor;
-        int cont;
         bool quit;
         bool start;
         bool menu;
@@ -35,17 +38,15 @@ class Screen{
         sf::Event ev;
         sf::Clock* clock;
         
-        //hotel
+        //main TAD
         cHotel *hotel;
         
+        //used fonts
         sf::Font font;
 
-        //mouse positions
+        //mouse positions variables
         sf::Vector2i mousePosWindow;
         sf::Vector2f mousePositionFloat;
-
-        //logic
-        float spawnTextTime;
 
 
         //private functions
@@ -54,8 +55,10 @@ class Screen{
         void initFont();
         void initText();
         void initButtons();
-        void initHotel();
         void initQuad();
+        void initHotel();
+
+
     public:
         //constructor and destructor
         Screen();
@@ -65,7 +68,6 @@ class Screen{
         const bool running() const;
 
         //functions
-        void spawText();
         void pollEvent();
         void updateMousePos();
 
@@ -73,10 +75,13 @@ class Screen{
         void updateText();
         void updateQuad();
         void updateButtons();
+        void updateHotel();
+        void updateDay();
         void update();
 
         void renderButtons();
         void renderText();
         void renderQuad();
+        void renderHotel();
         void render();
 };

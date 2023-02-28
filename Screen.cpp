@@ -1,19 +1,19 @@
 #include "Screen.hpp"
 
-//init 
+//init controls variables
 void Screen::initVariables(){
     this->window = nullptr;
-    this->spawnTextTime = 2.f;
     this->quit = false;
     this->start = false;
     this->menu = true;
     this->quadColor = false;
     this->write_state = WRITE_ZERO;
-    this->cont = 0;
+    this->count = 0;
+    
  
 }
 
-
+//init window
 void Screen::initWindow(){
     this->videoMode.height = 600;
     this->videoMode.width = 800;
@@ -22,10 +22,12 @@ void Screen::initWindow(){
     this->clock = new sf::Clock;
 }
 
+//init used fonts
 void Screen::initFont(){
     this->font.loadFromFile("./fonts/MANDORS.otf");
 }
 
+//init all texts
 void Screen::initText(){
     if (this->start == true){
     this->texts["WRITE_HOTEL_NAME"] = new sf::Text("Write Hotel Name: ", this->font, 25);
@@ -62,6 +64,8 @@ void Screen::initText(){
     this->posMenuTexts["STARS"] = new sf::Text("Stars: ", this->font, 25);
     this->posMenuTexts["ROOMS"] = new sf::Text("Rooms: ", this->font, 25);
     this->posMenuTexts["FLOORS"] = new sf::Text("Flooors: ", this->font, 25);
+    this->posMenuTexts["DAY"] = new sf::Text("Day: ", this->font, 25);
+    this->posMenuTexts["DAYCOUNT"] = new sf::Text(this->dayCount, this->font, 25);
 
     this->posMenuTexts["HOTEL"]->setPosition(10, 15);
     this->posMenuTexts["HOTEL"]->setFillColor(sf::Color::Green);
@@ -71,9 +75,15 @@ void Screen::initText(){
     this->posMenuTexts["ROOMS"]->setFillColor(sf::Color::Green);
     this->posMenuTexts["FLOORS"]->setPosition(460, 15);
     this->posMenuTexts["FLOORS"]->setFillColor(sf::Color::Green);
+    this->posMenuTexts["DAY"]->setPosition(10, 70);
+    this->posMenuTexts["DAY"]->setFillColor(sf::Color::Green);
+    this->posMenuTexts["DAYCOUNT"]->setPosition(this->posMenuTexts["DAY"]->getPosition().x + this->posMenuTexts["DAY"]->getGlobalBounds().width, 70);
+    this->posMenuTexts["DAYCOUNT"]->setFillColor(sf::Color::Red);
+
     }
 }
 
+//init all buttons
 void Screen::initButtons(){
     this->buttons["SIMULATION_STATE"] = new Button(320, 100, 150, 50,
     &this->font, "Start Simulation",
@@ -84,7 +94,7 @@ void Screen::initButtons(){
      sf::Color(70, 70, 70, 200), sf::Color(150, 150, 150, 200), sf::Color(20, 20, 20, 200));
 }
 
-
+//init quad shapes
 void Screen::initQuad(){
     if (start==true){
 
@@ -93,13 +103,22 @@ void Screen::initQuad(){
 
     }
 }
+
+//init main TAD
 void Screen::initHotel(){
     if (this->menu == false){
         int star = std::stoi(this->hotel_star);
         int room = std::stoi(this->hotel_room);
         int floor = std::stoi(this->hotel_floor);
         this->hotel = new cHotel(hotel_name, star, room, floor);
+
+
+        //this->updateHotel();
     }
+
+   
+
+
 
 
 }
@@ -122,6 +141,7 @@ const bool Screen::running() const{
     return this->window->isOpen();
 }
 
+//on screen events
 void Screen::pollEvent(){
     //event polling
     while(this->window->pollEvent(this->ev)){
@@ -137,31 +157,29 @@ void Screen::pollEvent(){
 
         this->updateTextPollEvent();
         
-        
     }    
 }
 
+//get mouse positions on screen
 void Screen::updateMousePos(){
     this->mousePosWindow = sf::Mouse::getPosition();
     mousePositionFloat = this->window->mapPixelToCoords(sf::Mouse::getPosition(*this->window));
 }
 
-
-
+//update variables and methods
 void Screen::update(){
     this->pollEvent();
     this->updateMousePos();
     this->updateButtons();
-    this->initText();
-    this->initQuad();
     this->updateText();
     this->updateQuad();
-    this->initHotel();
+    this->updateDay();
 
     if (quit == true) this->window->close();
     
 }
 
+//update button states 
 void Screen::updateButtons(){
 
     for (auto &it : this->buttons){
@@ -174,6 +192,9 @@ void Screen::updateButtons(){
 
     if (this->buttons["SIMULATION_STATE"]->isPressed()){
         this->start = true;
+        this->initText();
+        this->initQuad();
+        this->initHotel();
     }
 
     if (this->menu == false){
@@ -182,6 +203,7 @@ void Screen::updateButtons(){
 
 }
 
+//update input user text
 void Screen::updateTextPollEvent(){
     if (start == true){
             if (this->ev.type == sf::Event::TextEntered){
@@ -198,6 +220,10 @@ void Screen::updateTextPollEvent(){
                             break;
                         case WRITE_THIRD:
                             this->menu = false;
+                            this->clock->restart();
+                            this->write_state = -1;
+                            break;
+                        default:
                             break;   
                     }
                 }
@@ -226,14 +252,24 @@ void Screen::updateTextPollEvent(){
                         else if (!(this->hotel_floor.empty()) && this->ev.text.unicode == 8)
                             this->hotel_floor.pop_back();
                         break;
+                    default:
+                        break;
                 }         
                 
             }       
 
         }
+        if(!( this->boxTexts.empty())){
+            this->boxTexts["HOTEL_NAME"]->setString(hotel_name);
+            this->boxTexts["HOTEL_STAR"]->setString(hotel_star);
+            this->boxTexts["HOTEL_ROOM"]->setString(hotel_room);
+            this->boxTexts["HOTEL_FLOOR"]->setString(hotel_floor);
+        }
+
 
 }
 
+//update text location etc
 void Screen::updateText(){
 
         if (menu == false){
@@ -247,39 +283,66 @@ void Screen::updateText(){
 
 }
 
+//update quad shape locations
 void Screen::updateQuad(){
-    switch(write_state){
-        case WRITE_ZERO:
-            break;
-        case WRITE_FIRST:
-            this->quad.setPosition(texts["WRITE_HOTEL_STAR"]->getGlobalBounds().left - this->quad.getSize().x - 5, texts["WRITE_HOTEL_STAR"]->getPosition().y + 10);
-            break;
-        case WRITE_SECOND:
-            this->quad.setPosition(texts["WRITE_HOTEL_ROOMS"]->getGlobalBounds().left - this->quad.getSize().x - 5, texts["WRITE_HOTEL_ROOMS"]->getPosition().y + 10);
-            break; 
-        case WRITE_THIRD:
-            this->quad.setPosition(texts["WRITE_HOTEL_FLOORS"]->getGlobalBounds().left - this->quad.getSize().x - 5, texts["WRITE_HOTEL_FLOORS"]->getPosition().y + 10);
-            break;
-        default:
-            this->quad.setPosition(texts["WRITE_HOTEL_NAME"]->getGlobalBounds().left - this->quad.getSize().x - 5, texts["WRITE_HOTEL_NAME"]->getPosition().y + 10);
-            break;
+    if (menu == true){
+        switch(write_state){
+            case WRITE_ZERO:
+                break;
+            case WRITE_FIRST:
+                this->quad.setPosition(texts["WRITE_HOTEL_STAR"]->getGlobalBounds().left - this->quad.getSize().x - 5, texts["WRITE_HOTEL_STAR"]->getPosition().y + 10);
+                break;
+            case WRITE_SECOND:
+                this->quad.setPosition(texts["WRITE_HOTEL_ROOMS"]->getGlobalBounds().left - this->quad.getSize().x - 5, texts["WRITE_HOTEL_ROOMS"]->getPosition().y + 10);
+                break; 
+            case WRITE_THIRD:
+                this->quad.setPosition(texts["WRITE_HOTEL_FLOORS"]->getGlobalBounds().left - this->quad.getSize().x - 5, texts["WRITE_HOTEL_FLOORS"]->getPosition().y + 10);
+                break;
+            default:
+                this->quad.setPosition(texts["WRITE_HOTEL_NAME"]->getGlobalBounds().left - this->quad.getSize().x - 5, texts["WRITE_HOTEL_NAME"]->getPosition().y + 10);
+                break;
 
 
-    }
+        }
 
-    if(this->clock->getElapsedTime().asSeconds() >= 1.f){
-            if (this->quadColor == false){
-                this->quad.setFillColor(sf::Color::Black);
-                this->quadColor = true;
-            }
-            else{
-                this->quad.setFillColor(sf::Color::White);
-                this->quadColor = !this->quadColor;
-                
-            }
-            this->clock->restart();
+        if(this->clock->getElapsedTime().asSeconds() >= 1.f){
+                if (this->quadColor == false){
+                    this->quad.setFillColor(sf::Color::Black);
+                    this->quadColor = true;
+                }
+                else{
+                    this->quad.setFillColor(sf::Color::White);
+                    this->quadColor = !this->quadColor;
+                    
+                }
+                this->clock->restart();
+        }
     }
 }
+
+//update hotel infos
+void Screen::updateHotel(){
+
+    this->hotel->roomGen();
+    this->hotel->queueFill(10);
+    this->hotel->allocate();
+}
+
+//update days
+void Screen::updateDay(){
+    if (menu == false){
+        if(this->clock->getElapsedTime().asSeconds() >= 2.f){
+            this->count++;
+            this->posMenuTexts["DAYCOUNT"]->setString(std::to_string(this->count));
+            this->clock->restart();   
+
+            }
+            
+    }
+
+}
+
+//render all buttons
 void Screen::renderButtons(){
     if (start == false){
         for (auto &it : this->buttons){
@@ -291,6 +354,8 @@ void Screen::renderButtons(){
         
     }
 }
+
+//render all texts
 void Screen::renderText(){
         if(menu == true){
             for (auto &it : this->texts){
@@ -314,11 +379,14 @@ void Screen::renderText(){
     
 
 }
+
+//render quad shapes
 void Screen::renderQuad(){
     if (menu == true) this->window->draw(this->quad);
         
 }
 
+//main render function
 void Screen::render(){
     //clear old frames
     //render objects
