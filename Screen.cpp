@@ -9,8 +9,6 @@ void Screen::initVariables(){
     this->quadColor = false;
     this->write_state = WRITE_ZERO;
     this->count = 0;
-    
- 
 }
 
 //init window
@@ -20,6 +18,14 @@ void Screen::initWindow(){
     this->window = new sf::RenderWindow(this->videoMode, "Beauty Screen", sf::Style::Titlebar | sf::Style::Close);
     this->window->setFramerateLimit(60);
     this->clock = new sf::Clock;
+    
+    this->miniScreen.setSize(sf::Vector2f(650, 350));
+    this->miniScreen.setPosition(sf::Vector2f((this->window->getSize().x - this->miniScreen.getGlobalBounds().width)/2.f, window->getPosition().y/2.f - 100));
+    this->miniScreen.setFillColor(sf::Color(135, 135, 135));
+    this->miniScreen2.setSize(sf::Vector2f(660, 360));
+    this->miniScreen2.setPosition(sf::Vector2f((this->window->getSize().x - this->miniScreen.getGlobalBounds().width)/2.f -5, window->getPosition().y/2.f - 105));
+    this->miniScreen2.setFillColor(sf::Color::White);
+
 }
 
 //init used fonts
@@ -92,6 +98,17 @@ void Screen::initButtons(){
     this->buttons["EXIT_STATE"] = new Button(320, 300, 150, 50,
     &this->font, "Quit",
      sf::Color(70, 70, 70, 200), sf::Color(150, 150, 150, 200), sf::Color(20, 20, 20, 200));
+
+
+    this->nav_buttons["PREVIOUS_BNT"]= new Button(150, 480, 150, 50,
+    &this->font, "Previous",
+     sf::Color(70, 70, 70, 200), sf::Color(150, 150, 150, 200), sf::Color(20, 20, 20, 200));
+     
+    this->nav_buttons["NEXT_BNT"]= new Button(460, 480, 150, 50,
+    &this->font, "Next",
+     sf::Color(70, 70, 70, 200), sf::Color(150, 150, 150, 200), sf::Color(20, 20, 20, 200));
+
+    
 }
 
 //init quad shapes
@@ -100,7 +117,6 @@ void Screen::initQuad(){
 
         this->quad.setSize({20.f, 20.f});
         this->quad.setPosition(texts["WRITE_HOTEL_NAME"]->getGlobalBounds().left - this->quad.getSize().x - 5, texts["WRITE_HOTEL_NAME"]->getPosition().y + 10);
-
     }
 }
 
@@ -112,15 +128,7 @@ void Screen::initHotel(){
         int floor = std::stoi(this->hotel_floor);
         this->hotel = new cHotel(hotel_name, star, room, floor);
 
-
-        //this->updateHotel();
     }
-
-   
-
-
-
-
 }
 
 //constructor and destructor
@@ -174,6 +182,8 @@ void Screen::update(){
     this->updateText();
     this->updateQuad();
     this->updateDay();
+    this->updateHotel();
+
 
     if (quit == true) this->window->close();
     
@@ -186,6 +196,10 @@ void Screen::updateButtons(){
         it.second->update(this->mousePositionFloat);
     }
 
+    for (auto &it : this->nav_buttons){
+        it.second->update(this->mousePositionFloat);
+    }
+
     if (this->buttons["EXIT_STATE"]->isPressed()){
         this->quit = true;
     }
@@ -194,13 +208,26 @@ void Screen::updateButtons(){
         this->start = true;
         this->initText();
         this->initQuad();
-        this->initHotel();
+    }
+    if(this->clock->getElapsedTime().asMilliseconds() >= 500.f){
+        if (this->nav_buttons["PREVIOUS_BNT"]->isPressed()){
+            if (this->count > 1){
+                this->count--;
+                this->posMenuTexts["DAYCOUNT"]->setString(std::to_string(this->count));
+                this->clock->restart();
+                //this->updateHotel();
+            }
+        }
     }
 
-    if (this->menu == false){
-        this->buttons["EXIT_STATE"]->setPosition(this->window->getSize().x - 10 -this->buttons["EXIT_STATE"]->getLocalBounds(), 10);
+    if(this->clock->getElapsedTime().asMilliseconds() >= 500.f){
+        if(this->nav_buttons["NEXT_BNT"]->isPressed()){
+            this->count++;
+            this->posMenuTexts["DAYCOUNT"]->setString(std::to_string(this->count));
+            //this->updateHotel();
+            this->clock->restart();
+        }
     }
-
 }
 
 //update input user text
@@ -221,6 +248,8 @@ void Screen::updateTextPollEvent(){
                         case WRITE_THIRD:
                             this->menu = false;
                             this->clock->restart();
+                            this->initHotel();
+                            this->buttons["EXIT_STATE"]->setPosition(this->window->getSize().x - 10 -this->buttons["EXIT_STATE"]->getLocalBounds(), 10);
                             this->write_state = -1;
                             break;
                         default:
@@ -322,23 +351,16 @@ void Screen::updateQuad(){
 
 //update hotel infos
 void Screen::updateHotel(){
-
-    this->hotel->roomGen();
-    this->hotel->queueFill(10);
-    this->hotel->allocate();
+    if (menu == false){
+        this->hotel->queueFill(10);
+        this->hotel->allocate();
+        this->hotel_days.push_back(std::make_pair(this->count, this->hotel));
+    }
 }
 
 //update days
 void Screen::updateDay(){
-    if (menu == false){
-        if(this->clock->getElapsedTime().asSeconds() >= 2.f){
-            this->count++;
-            this->posMenuTexts["DAYCOUNT"]->setString(std::to_string(this->count));
-            this->clock->restart();   
 
-            }
-            
-    }
 
 }
 
@@ -351,7 +373,9 @@ void Screen::renderButtons(){
     }
     else if(menu == false){
         this->buttons["EXIT_STATE"]->render(this->window);
-        
+        for (auto &it : this->nav_buttons){
+            it.second->render(this->window);
+        } 
     }
 }
 
@@ -386,6 +410,15 @@ void Screen::renderQuad(){
         
 }
 
+
+//render MiniScreen
+void Screen::renderMScreen(){
+    if(menu == false){
+        this->window->draw(this->miniScreen2);
+        this->window->draw(this->miniScreen);
+    } 
+    
+}
 //main render function
 void Screen::render(){
     //clear old frames
@@ -400,6 +433,7 @@ void Screen::render(){
     this->renderButtons();
     this->renderText();
     this->renderQuad();
+    this->renderMScreen();
 
     
     this->window->display();

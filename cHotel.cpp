@@ -110,6 +110,7 @@ cHotel::cHotel(std::string n, int s, int r, int f){
     this->stars = s;
     this->qRooms = r;
     this->qFloors = f;
+    this->roomGen();
 }
 cHotel::cHotel(){
 
