@@ -69,8 +69,9 @@ class cHotel{
         void roomGen();
         void queueFill(int);
         void allocate();
+        void getRoom();
         
-        void print();
+        void print(int);
 };
 
 

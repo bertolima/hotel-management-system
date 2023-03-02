@@ -202,13 +202,8 @@ void cHotel::allocate(){
 
 }
 
-void cHotel::print(){
-
-    for (int i=0;i<this->rooms.size();i++){
-        rooms[i].print();
-    }
-
-    
+void cHotel::print(int i){
+        rooms[i].print();   
 }
 
 
