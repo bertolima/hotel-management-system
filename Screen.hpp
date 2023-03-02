@@ -39,6 +39,7 @@ class Screen{
         bool start;
         bool menu;
         short unsigned write_state;
+        short unsigned hotel_print;
 
         //window
         sf::RenderWindow* window;

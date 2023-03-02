@@ -8,6 +8,7 @@ void Screen::initVariables(){
     this->menu = true;
     this->quadColor = false;
     this->write_state = WRITE_ZERO;
+    this->hotel_print = HOTEL_ZERO;
     this->count = 0;
 }
 
@@ -20,10 +21,10 @@ void Screen::initWindow(){
     this->clock = new sf::Clock;
     
     this->miniScreen.setSize(sf::Vector2f(650, 350));
-    this->miniScreen.setPosition(sf::Vector2f((this->window->getSize().x - this->miniScreen.getGlobalBounds().width)/2.f, window->getPosition().y/2.f - 100));
+    this->miniScreen.setPosition(sf::Vector2f((this->window->getSize().x - this->miniScreen.getGlobalBounds().width)/2.f, window->getSize().y - this->miniScreen.getGlobalBounds().height - 135.f));
     this->miniScreen.setFillColor(sf::Color(135, 135, 135));
     this->miniScreen2.setSize(sf::Vector2f(660, 360));
-    this->miniScreen2.setPosition(sf::Vector2f((this->window->getSize().x - this->miniScreen.getGlobalBounds().width)/2.f -5, window->getPosition().y/2.f - 105));
+    this->miniScreen2.setPosition(sf::Vector2f((this->window->getSize().x - this->miniScreen.getGlobalBounds().width)/2.f -5, window->getSize().y - this->miniScreen.getGlobalBounds().height - 140.f));
     this->miniScreen2.setFillColor(sf::Color::White);
 
 }
@@ -182,7 +183,6 @@ void Screen::update(){
     this->updateText();
     this->updateQuad();
     this->updateDay();
-    this->updateHotel();
 
 
     if (quit == true) this->window->close();
@@ -213,9 +213,10 @@ void Screen::updateButtons(){
         if (this->nav_buttons["PREVIOUS_BNT"]->isPressed()){
             if (this->count > 1){
                 this->count--;
+                this->hotel_print = HOTEL_FIRST;
+                
                 this->posMenuTexts["DAYCOUNT"]->setString(std::to_string(this->count));
                 this->clock->restart();
-                //this->updateHotel();
             }
         }
     }
@@ -223,8 +224,13 @@ void Screen::updateButtons(){
     if(this->clock->getElapsedTime().asMilliseconds() >= 500.f){
         if(this->nav_buttons["NEXT_BNT"]->isPressed()){
             this->count++;
+            if(this->count-1 == hotel_days.size())
+                this->updateHotel();
+            if (this->hotel_days.size() > 0){
+                this->hotel_print = HOTEL_FIRST;
+                
+            }
             this->posMenuTexts["DAYCOUNT"]->setString(std::to_string(this->count));
-            //this->updateHotel();
             this->clock->restart();
         }
     }
@@ -410,7 +416,13 @@ void Screen::renderQuad(){
         
 }
 
-
+//render hotel infos
+void Screen::renderHotel(){
+    if (this->hotel_print == HOTEL_FIRST){
+            this->hotel_days[count-1].second->print(this->count-1);
+            this->hotel_print = HOTEL_ZERO;
+    }
+}
 //render MiniScreen
 void Screen::renderMScreen(){
     if(menu == false){
@@ -434,6 +446,7 @@ void Screen::render(){
     this->renderText();
     this->renderQuad();
     this->renderMScreen();
+    this->renderHotel();
 
     
     this->window->display();
