@@ -10,6 +10,7 @@ void Screen::initVariables(){
     this->write_state = WRITE_ZERO;
     this->hotel_print = HOTEL_ZERO;
     this->count = 0;
+    this->hotel_start = false;
 }
 
 //init window
@@ -86,6 +87,18 @@ void Screen::initText(){
     this->posMenuTexts["DAY"]->setFillColor(sf::Color::Green);
     this->posMenuTexts["DAYCOUNT"]->setPosition(this->posMenuTexts["DAY"]->getPosition().x + this->posMenuTexts["DAY"]->getGlobalBounds().width, 70);
     this->posMenuTexts["DAYCOUNT"]->setFillColor(sf::Color::Red);
+
+    this->hotel_infos["ROOM_QTD"] = new sf::Text(this->hotel_qtd, this->font, 25);
+    this->hotel_infos["ROOM_QTD"]->setPosition(sf::Vector2f((this->window->getSize().x - this->miniScreen.getGlobalBounds().width)/2.f + 10.f, window->getSize().y - this->miniScreen.getGlobalBounds().height - 135.f));
+    this->hotel_infos["ROOM_QTD"]->setFillColor(sf::Color::Blue);
+
+    this->hotel_infos["ROOM_FREE"] = new sf::Text(this->hotel_qtd, this->font, 25);
+    this->hotel_infos["ROOM_FREE"]->setPosition(sf::Vector2f((this->window->getSize().x - this->miniScreen.getGlobalBounds().width)/2.f + 310.f, window->getSize().y - this->miniScreen.getGlobalBounds().height - 135.f));
+    this->hotel_infos["ROOM_FREE"]->setFillColor(sf::Color::Blue);
+
+    this->hotel_infos_write["ROOM_FREE"] = new sf::Text(this->hotel_qtd, this->font, 25);
+    this->hotel_infos_write["ROOM_FREE"]->setPosition(sf::Vector2f((this->window->getSize().x - this->miniScreen.getGlobalBounds().width)/2.f + 10.f, window->getSize().y - this->miniScreen.getGlobalBounds().height - 70.f));
+    this->hotel_infos_write["ROOM_FREE"]->setFillColor(sf::Color::Blue);
 
     }
 }
@@ -223,6 +236,7 @@ void Screen::updateButtons(){
 
     if(this->clock->getElapsedTime().asMilliseconds() >= 500.f){
         if(this->nav_buttons["NEXT_BNT"]->isPressed()){
+            this->hotel_start = true;
             this->count++;
             if(this->count-1 == hotel_days.size())
                 this->updateHotel();
@@ -301,7 +315,20 @@ void Screen::updateTextPollEvent(){
             this->boxTexts["HOTEL_FLOOR"]->setString(hotel_floor);
         }
 
+        if (this->hotel_start == true){
+            if (this->ev.type == sf::Event::TextEntered){
+                if (this->ev.text.unicode == 13 && !(room_search.empty()))
+                    this->updateHotel();
+                else if ((this->ev.text.unicode > 47 && this->ev.text.unicode < 58 && this->room_search.size() < std::to_string(this->hotel_days[0].second.getRoomqtt()).size()))
+                    this->room_search.push_back(static_cast<char>(this->ev.text.unicode));
+                else if (!(this->room_search.empty()) && this->ev.text.unicode == 8)
+                        this->room_search.pop_back();
+            }
+        }
 
+        if(!(this->hotel_infos_write.empty())){
+            this->hotel_infos_write["ROOM_FREE"]->setString(room_search);
+        }
 }
 
 //update text location etc
@@ -360,7 +387,7 @@ void Screen::updateHotel(){
     if (menu == false){
         this->hotel->queueFill(10);
         this->hotel->allocate();
-        this->hotel_days.push_back(std::make_pair(this->count, this->hotel));
+        this->hotel_days.emplace_back(std::make_pair(this->count, *this->hotel));
     }
 }
 
@@ -404,6 +431,14 @@ void Screen::renderText(){
             for (auto &it : this->boxTexts){
                 this->window->draw(*it.second);
             }
+            for (auto &it : this->hotel_infos){
+                this->window->draw(*it.second);
+            }
+
+            for (auto &it : this->hotel_infos_write){
+                this->window->draw(*it.second);
+            }
+
 
         }
     
@@ -419,8 +454,10 @@ void Screen::renderQuad(){
 //render hotel infos
 void Screen::renderHotel(){
     if (this->hotel_print == HOTEL_FIRST){
-            this->hotel_days[count-1].second->print(this->count-1);
+            this->hotel_days[count-1].second.print(this->count-1);
             this->hotel_print = HOTEL_ZERO;
+            this->hotel_infos["ROOM_QTD"]->setString("Quartos ocupados: " + this->hotel_days[this->count-1].second.getRoomsOccuped());
+            this->hotel_infos["ROOM_FREE"]->setString("Quartos Livres: " + this->hotel_days[this->count-1].second.getRoomsFree());
     }
 }
 //render MiniScreen
@@ -443,10 +480,11 @@ void Screen::render(){
     //draw game objects
     // this->window->draw(this->start);
     this->renderButtons();
-    this->renderText();
+    
     this->renderQuad();
     this->renderMScreen();
     this->renderHotel();
+    this->renderText();
 
     
     this->window->display();

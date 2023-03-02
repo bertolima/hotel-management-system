@@ -206,6 +206,30 @@ void cHotel::print(int i){
         rooms[i].print();   
 }
 
+std::string cHotel::getRoomsOccuped(){
+    int cont = 0;
+    for (auto &it : this->rooms){
+        if (it.getOccuped() == true){
+            cont++;
+        }
+    }
+    return std::to_string(cont);
+}
+
+std::string cHotel::getRoomsFree(){
+    int cont = 0;
+    for (auto &it : this->rooms){
+        if (it.getOccuped() == false){
+            cont++;
+        }
+    }
+    return std::to_string(cont);
+}
+
+int cHotel::getRoomqtt(){
+    return this->rooms.size();
+}
+
 
 
 

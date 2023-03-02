@@ -25,10 +25,11 @@ class Screen{
         std::map<std::string, sf::Text*> boxTexts;
         std::map<std::string, sf::Text*> posMenuTexts;
         std::map<std::string, sf::Text*> hotel_infos;
-        std::vector<std::pair<int, cHotel*>> hotel_days;
+        std::map<std::string, sf::Text*> hotel_infos_write;
+        std::vector<std::pair<int, cHotel>> hotel_days;
         sf::RectangleShape miniScreen;
         sf::RectangleShape miniScreen2;
-        std::string hotel_name, hotel_star, hotel_room, hotel_floor;
+        std::string hotel_name, hotel_star, hotel_room, hotel_floor, hotel_qtd, room_search;
         sf::RectangleShape quad;
         std::string dayCount;
         int count;
@@ -38,6 +39,7 @@ class Screen{
         bool quit;
         bool start;
         bool menu;
+        bool hotel_start;
         short unsigned write_state;
         short unsigned hotel_print;
 

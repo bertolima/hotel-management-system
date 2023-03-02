@@ -70,8 +70,12 @@ class cHotel{
         void queueFill(int);
         void allocate();
         void getRoom();
-        
         void print(int);
+        int getRoomqtt();
+        std::string getRoomsOccuped();
+        std::string getRoomsFree();
+
+        
 };
 
 
