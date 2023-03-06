@@ -7,8 +7,6 @@
 #include "cHotel.hpp"
 #include "Button.hpp"
 #include <string>
-#include <map>
-#include <utility>
 
 enum write_states{WRITE_ZERO = 0, WRITE_FIRST,  WRITE_SECOND, WRITE_THIRD};
 enum hotel_navigation{NAVIGATION_ZERO = 0, NAVIGATION_FIRST, NAVIGATION_SECOND, NAVIGATION_THIRD};
@@ -26,7 +24,8 @@ class Screen{
         std::map<std::string, sf::Text*> posMenuTexts;
         std::map<std::string, sf::Text*> hotel_infos;
         std::map<std::string, sf::Text*> hotel_infos_write;
-        std::vector<std::pair<int, cHotel>> hotel_days;
+        std::map<std::string, sf::Text*> room_info;
+        std::vector<cHotel> hotel_days;
         sf::RectangleShape miniScreen;
         sf::RectangleShape miniScreen2;
         std::string hotel_name, hotel_star, hotel_room, hotel_floor, hotel_qtd, room_search;
@@ -42,6 +41,7 @@ class Screen{
         bool hotel_start;
         short unsigned write_state;
         short unsigned hotel_print;
+        short unsigned nav_state;
 
         //window
         sf::RenderWindow* window;
