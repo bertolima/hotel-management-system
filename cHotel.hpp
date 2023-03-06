@@ -74,6 +74,12 @@ class cHotel{
         int getRoomqtt();
         std::string getRoomsOccuped();
         std::string getRoomsFree();
+        std::string getRoomOccuped(int);
+        std::string getRoomFridge(int);
+        std::string getRoomCapacity(int);
+        std::string getRoomNumber(int);
+
+
 
         
 };

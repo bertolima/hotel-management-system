@@ -230,6 +230,31 @@ int cHotel::getRoomqtt(){
     return this->rooms.size();
 }
 
+std::string cHotel::getRoomOccuped(int i){
+    if (rooms[i].getOccuped() == 1)
+        return "Yes";
+    else
+     return "No";
+}
+
+std::string cHotel::getRoomFridge(int i){
+    if (rooms[i].getFridge() == 1)
+        return "Yes";
+    else
+     return "No";
+    
+}
+
+std::string cHotel::getRoomCapacity(int i){
+    std::string state = std::to_string(this->rooms[i].getCapacity());
+    return state;
+}
+
+std::string cHotel::getRoomNumber(int i){
+    std::string state = std::to_string(this->rooms[i].getNumber());
+    return state;
+}
+
 
 
 
